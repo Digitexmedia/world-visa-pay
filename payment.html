@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Funds - World Visa Pay</title>
+  <style>
+    body {
+      background: #F4F7FA;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 450px;
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 1rem;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 0.3rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.9rem;
+      background: #0066ff;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0044cc;
+    }
+
+    #status {
+      margin-top: 1rem;
+      text-align: center;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Fund Your Wallet</h2>
+    <form id="payForm">
+      <label for="amount">Amount (KES):</label>
+      <input type="number" id="amount" required />
+
+      <label for="phone">Phone Number:</label>
+      <input type="text" id="phone" placeholder="e.g., 0712345678" required />
+
+      <button type="submit">Proceed to Pay</button>
+      <p id="status"></p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("payForm");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      status.innerText = "Processing...";
+
+      const res = await fetch("https://digitexsmartsolutions.com/addfunds", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: document.getElementById("amount").value,
+          phone_number: document.getElementById("phone").value,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.redirect_url) {
+        status.innerText = "Redirecting to payment...";
+        window.location.href = data.redirect_url;
+      } else {
+        status.innerText = data.message || "Failed to initiate payment.";
+      }
+    });
+  </script>
+</body>
+</html>
