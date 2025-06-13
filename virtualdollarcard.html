@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Virtual Card</title>
+  <style>
+    body {
+      background: #F7F6FE;
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+    button {
+      padding: 12px 24px;
+      background-color: #5A67D8;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #response {
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Create Virtual Dollar Card</h2>
+  <button onclick="createCard()">Create Card Product</button>
+
+  <div id="response"></div>
+
+  <script>
+    async function createCard() {
+      const resDiv = document.getElementById('response');
+      resDiv.innerHTML = "Creating card product...";
+
+      try {
+        const res = await fetch('http://localhost:8080/api/cardproduct', {
+          method: 'POST'
+        });
+
+        const data = await res.text();
+        resDiv.innerHTML = "✅ Card Created Successfully:\n\n" + data;
+      } catch (error) {
+        resDiv.innerHTML = "❌ Error:\n\n" + error;
+      }
+    }
+  </script>
+</body>
+</html>
