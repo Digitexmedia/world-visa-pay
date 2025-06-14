@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,50 +7,123 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f5f8ff;
+      background: #f2f4f8;
       margin: 0;
-      padding: 0;
+      padding: 2rem;
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
+      align-items: flex-start;
+      min-height: 100vh;
     }
-    .container {
+
+    .exchange-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h2 {
       text-align: center;
-      background: #fff;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
     }
-    h1 {
-      color: #1b325f;
-      margin-bottom: 20px;
-    }
-    p {
-      color: #555;
-      font-size: 1rem;
-      margin-bottom: 30px;
-    }
-    .btn {
-      padding: 14px 30px;
-      background: linear-gradient(to right, #4b6cb7, #182848);
-      color: white;
-      font-size: 1rem;
-      border: none;
+
+    select, input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
       border-radius: 8px;
-      text-decoration: none;
-      transition: 0.3s ease;
+      border: 1px solid #ccc;
     }
-    .btn:hover {
-      background: linear-gradient(to right, #182848, #4b6cb7);
+
+    button {
+      background-color: #0266ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #014db2;
+    }
+
+    #output {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Currency Exchange</h1>
-    <p>Need real-time currency conversion? Use our trusted partner XE for accurate rates.</p>
-    <a href="https://www.xe.com/currencyconverter/" target="_blank" class="btn">Convert with XE.com 🔗</a>
+
+  <div class="exchange-box">
+    <h2>Currency Exchange</h2>
+    <input type="number" id="amount" placeholder="Enter amount" />
+    <select id="fromCurrency"></select>
+    <select id="toCurrency"></select>
+    <button onclick="convertCurrency()">Convert</button>
+    <div id="output"></div>
   </div>
+
+  <script>
+    const fromSelect = document.getElementById('fromCurrency');
+    const toSelect = document.getElementById('toCurrency');
+
+    // Populate currency dropdowns
+    async function populateCurrencies() {
+      try {
+        const res = await fetch('https://api.exchangerate.host/symbols');
+        const data = await res.json();
+        const symbols = data.symbols;
+
+        Object.keys(symbols).forEach((code) => {
+          const desc = symbols[code].description;
+          const option1 = new Option(`${desc} (${code})`, code);
+          const option2 = new Option(`${desc} (${code})`, code);
+
+          fromSelect.appendChild(option1);
+          toSelect.appendChild(option2);
+        });
+
+        fromSelect.value = 'USD';
+        toSelect.value = 'KES';
+      } catch (error) {
+        alert('Failed to load currency list. Please try again later.');
+        console.error(error);
+      }
+    }
+
+    populateCurrencies();
+
+    // Currency conversion function
+    function convertCurrency() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const from = fromSelect.value;
+      const to = toSelect.value;
+
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount.');
+        return;
+      }
+
+      document.getElementById('output').innerText = 'Converting...';
+
+      fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`)
+        .then(res => res.json())
+        .then(data => {
+          const result = data.result;
+          document.getElementById('output').innerText =
+            `${amount} ${from} = ${result.toFixed(2)} ${to}`;
+        })
+        .catch(() => {
+          document.getElementById('output').innerText = 'Error fetching conversion data.';
+        });
+    }
+  </script>
+
 </body>
 </html>
