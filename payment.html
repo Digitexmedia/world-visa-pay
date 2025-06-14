@@ -4,114 +4,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Add Funds - World Visa Pay</title>
+  <title>Payment Gateway | World Visa Pay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background: #F4F7FA;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
       margin: 0;
-    }
-
-    .card {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 450px;
-    }
-
-    .card h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
+      padding: 0;
       color: #333;
     }
 
-    label {
-      font-weight: 600;
-      margin-top: 1rem;
-      display: block;
-    }
-
-    input {
-      width: 100%;
-      padding: 0.8rem;
-      margin-top: 0.3rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-
-    button {
-      margin-top: 1.5rem;
-      width: 100%;
-      padding: 0.9rem;
-      background: #0066ff;
+    header {
+      background-color: #1e1f29;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       color: white;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
     }
 
-    button:hover {
-      background: #0044cc;
+    header img {
+      height: 50px;
+      border-radius: 6px;
     }
 
-    #status {
-      margin-top: 1rem;
+    nav a {
+      margin-left: 1rem;
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #1cb5e0, #000851);
+      color: white;
       text-align: center;
-      color: green;
+      padding: 3rem 2rem;
+    }
+
+    .content {
+      padding: 3rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      color: #1e1f29;
+    }
+
+    ul {
+      margin-left: 1rem;
+    }
+
+    .cta {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .cta a {
+      display: inline-block;
+      background-color: #25D366;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      text-decoration: none;
+      border-radius: 8px;
       font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .cta a:hover {
+      background-color: #1ebc59;
+    }
+
+    footer {
+      background-color: #1e1f29;
+      color: #aaa;
+      text-align: center;
+      padding: 2rem 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Fund Your Wallet</h2>
-    <form id="payForm">
-      <label for="amount">Amount (KES):</label>
-      <input type="number" id="amount" required />
 
-      <label for="phone">Phone Number:</label>
-      <input type="text" id="phone" placeholder="e.g., 0712345678" required />
+<header>
+  <a href="index.html"><img src="https://files.catbox.moe/egicbd.jpeg" alt="World Visa Pay Logo"></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
 
-      <button type="submit">Proceed to Pay</button>
-      <p id="status"></p>
-    </form>
+<section class="hero">
+  <h1>Payment Gateway Solutions</h1>
+  <p>Offer your clients reliable, secure, and scalable payment integration for web and mobile platforms.</p>
+</section>
+
+<section class="content">
+  <h2>What We Offer</h2>
+  <p>World Visa Pay supports:</p>
+  <ul>
+    <li>Mobile Money (M-Pesa, Airtel Money)</li>
+    <li>Visa / Mastercard / Pesapal Checkout</li>
+    <li>Digital Wallet Integration</li>
+    <li>Custom API for project-based use</li>
+  </ul>
+
+  <h2>Ideal for:</h2>
+  <ul>
+    <li>Ecommerce Websites</li>
+    <li>Digital Agencies</li>
+    <li>Freelancers and Developers</li>
+    <li>Online SaaS and Subscription Platforms</li>
+  </ul>
+
+  <h2>Need Seamless Integration?</h2>
+  <p>We provide hands-on integration assistance for your platforms. Whether you're building from scratch or upgrading payment capabilities, we’re here to help.</p>
+
+  <div class="cta">
+    <a href="https://wa.me/message/ORROOSOSU4ONM1" target="_blank">💬 Contact Developer on WhatsApp</a>
   </div>
+</section>
 
-  <script>
-    const form = document.getElementById("payForm");
-    const status = document.getElementById("status");
+<footer>
+  &copy; 2025 World Visa Pay. All rights reserved.
+</footer>
 
-    form.addEventListener("submit", async function (e) {
-      e.preventDefault();
-      status.innerText = "Processing...";
-
-      const res = await fetch("https://digitexsmartsolutions.com/addfunds", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: document.getElementById("amount").value,
-          phone_number: document.getElementById("phone").value,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.redirect_url) {
-        status.innerText = "Redirecting to payment...";
-        window.location.href = data.redirect_url;
-      } else {
-        status.innerText = data.message || "Failed to initiate payment.";
-      }
-    });
-  </script>
 </body>
 </html>
