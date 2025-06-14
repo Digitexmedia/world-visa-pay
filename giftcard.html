@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gift Card Exchange - World Visa Pay</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .giftcard-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      max-width: 550px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .tabs button {
+      flex: 1;
+      padding: 12px;
+      font-weight: bold;
+      background: #e0e7ff;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: 0.3s;
+    }
+
+    .tabs button.active {
+      background: #1d4ed8;
+      color: white;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input, select, textarea {
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    input[type="file"] {
+      padding: 8px;
+    }
+
+    button.submit-btn {
+      background-color: #1d4ed8;
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    button.submit-btn:hover {
+      background-color: #1740c1;
+    }
+
+    #preview {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    img.preview-img {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    #currentMode {
+      font-weight: bold;
+      color: #1d4ed8;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="giftcard-box">
+    <h2>Gift Card Exchange</h2>
+
+    <div class="tabs">
+      <button id="buyBtn" class="active" onclick="switchMode('buy')">Buy</button>
+      <button id="sellBtn" onclick="switchMode('sell')">Sell</button>
+    </div>
+
+    <div id="currentMode">Mode: Buy</div>
+
+    <form id="giftcardForm">
+      <input type="text" id="cardName" placeholder="Gift Card Name (e.g. Amazon, iTunes)" required />
+      <input type="number" id="cardValue" placeholder="Card Value (e.g. 100)" required />
+      <select id="currency">
+        <option value="USD">USD</option>
+        <option value="KES">KES</option>
+        <option value="NGN">NGN</option>
+        <option value="GBP">GBP</option>
+      </select>
+      <input type="file" id="cardImage" accept="image/*" onchange="previewImage()" />
+      <textarea placeholder="Optional notes..." rows="3"></textarea>
+      <button type="submit" class="submit-btn">Buy Card</button>
+    </form>
+
+    <div id="preview"></div>
+  </div>
+
+  <script>
+    let currentMode = "buy";
+
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById("buyBtn").classList.toggle("active", mode === "buy");
+      document.getElementById("sellBtn").classList.toggle("active", mode === "sell");
+
+      document.querySelector('.submit-btn').textContent = mode === 'buy' ? 'Buy Card' : 'Sell Card';
+      document.getElementById("currentMode").innerText = "Mode: " + (mode === 'buy' ? "Buy" : "Sell");
+    }
+
+    function previewImage() {
+      const fileInput = document.getElementById('cardImage');
+      const preview = document.getElementById('preview');
+      preview.innerHTML = ''; // Clear preview
+
+      const file = fileInput.files[0];
+      if (file) {
+        const img = document.createElement('img');
+        img.classList.add('preview-img');
+        img.src = URL.createObjectURL(file);
+        preview.appendChild(img);
+      }
+    }
+
+    document.getElementById('giftcardForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert(currentMode.toUpperCase() + ' request submitted! Please wait for feedback;
+      // Replace with real backend request
+    });
+  </script>
+
+</body>
+</html>
