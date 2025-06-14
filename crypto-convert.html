@@ -1,95 +1,84 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crypto to Fiat Converter - World Visa Pay</title>
+  <title>Crypto ↔ Fiat Converter - World Visa Pay</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      padding: 40px;
-      text-align: center;
-    }
-    .converter {
-      background: white;
-      padding: 30px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      border-radius: 12px;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #2d89ef;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #1c6ed2;
-    }
-    #result {
-      font-weight: bold;
-      margin-top: 20px;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: #fafbfc; margin:0; display:flex;justify-content:center; align-items: start; padding:2rem; }
+    .converter { background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1); padding:2rem; max-width:500px; width:100%; }
+    h2 { text-align:center; margin-bottom:1rem; }
+    select, input, button { width:100%;padding:12px;margin:10px 0;font-size:16px;border-radius:6px;border:1px solid #ccc; }
+    button { background:#0266ff; color:white; border:none; cursor:pointer; transition:0.3s; }
+    button:hover { background:#0148b9; }
+    #result { margin-top:20px; font-weight:bold; text-align:center; font-size:18px; }
   </style>
 </head>
 <body>
+
   <div class="converter">
-    <h2>Crypto to Fiat Converter</h2>
-    <input type="number" id="cryptoAmount" placeholder="Enter crypto amount" />
-    
-    <select id="cryptoSelect">
-      <option value="bitcoin">BTC</option>
-      <option value="ethereum">ETH</option>
-      <option value="tether">USDT</option>
-    </select>
-
-    <select id="fiatSelect">
-      <option value="usd">USD</option>
-      <option value="kes">KES</option>
-      <option value="ngn">NGN</option>
-    </select>
-
+    <h2>Crypto ↔ Fiat Converter</h2>
+    <input type="number" id="cryptoAmount" placeholder="Amount" />
+    <select id="cryptoSelect"></select>
+    <select id="fiatSelect"></select>
     <button onclick="convert()">Convert</button>
-
     <div id="result"></div>
   </div>
 
   <script>
-    async function convert() {
-      const crypto = document.getElementById("cryptoSelect").value;
-      const fiat = document.getElementById("fiatSelect").value;
-      const amount = parseFloat(document.getElementById("cryptoAmount").value);
+    let coins = [], fiatCurrencies = [];
 
+    async function init() {
+      // Fetch supported coins (top 100)
+      const coinsRes = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1');
+      coins = await coinsRes.json();
+      const cryptoSelect = document.getElementById('cryptoSelect');
+      coins.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.text = `${c.name} (${c.symbol.toUpperCase()})`;
+        cryptoSelect.add(opt);
+      });
+
+      // Fetch list of fiat currencies
+      const fiatRes = await fetch('https://api.coingecko.com/api/v3/simple/supported_vs_currencies');
+      fiatCurrencies = await fiatRes.json();
+      const fiatSelect = document.getElementById('fiatSelect');
+      fiatCurrencies.sort().forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f;
+        opt.text = f.toUpperCase();
+        fiatSelect.add(opt);
+      });
+      fiatSelect.value = 'usd'; // default
+    }
+
+    async function convert() {
+      const crypto = document.getElementById('cryptoSelect').value;
+      const fiat = document.getElementById('fiatSelect').value;
+      const amount = parseFloat(document.getElementById('cryptoAmount').value);
       if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid amount.");
+        alert('Enter a valid amount');
         return;
       }
 
-      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${crypto}&vs_currencies=${fiat}`;
+      document.getElementById('result').innerText = 'Converting...';
 
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${crypto}&vs_currencies=${fiat}`;
       try {
         const res = await fetch(url);
         const data = await res.json();
         const rate = data[crypto][fiat];
-        const converted = (amount * rate).toFixed(2);
-
-        document.getElementById("result").innerText =
-          `${amount} ${crypto.toUpperCase()} = ${converted} ${fiat.toUpperCase()}`;
-      } catch (error) {
-        document.getElementById("result").innerText = "Conversion failed. Try again.";
-        console.error(error);
+        document.getElementById('result').innerText =
+          `${amount} ${crypto.toUpperCase()} = ${(amount * rate).toFixed(2)} ${fiat.toUpperCase()}`;
+      } catch {
+        document.getElementById('result').innerText = 'Conversion error. Try again.';
       }
     }
+
+    init();
   </script>
+
 </body>
 </html>
