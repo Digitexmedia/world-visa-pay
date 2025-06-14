@@ -1,129 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Currency Exchange - World Visa Pay</title>
+  <meta charset="UTF-8">
+  <title>African Currency Exchanger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f2f4f8;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background: #f2f5fb;
+      padding: 20px;
+      color: #333;
     }
-
-    .exchange-box {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    .converter {
       max-width: 500px;
-      width: 100%;
+      margin: auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
     }
-
     h2 {
       text-align: center;
-      margin-bottom: 1rem;
+      color: #0056b3;
     }
-
-    select, input, button {
+    label, select, input {
+      display: block;
       width: 100%;
-      padding: 12px;
       margin: 10px 0;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
     }
-
     button {
-      background-color: #0266ff;
+      width: 100%;
+      padding: 0.75rem;
+      background: #0056b3;
       color: white;
+      font-weight: bold;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
     }
-
-    button:hover {
-      background-color: #014db2;
-    }
-
-    #output {
-      margin-top: 20px;
+    .result {
       text-align: center;
-      font-weight: bold;
-      font-size: 18px;
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: green;
     }
   </style>
 </head>
 <body>
-
-  <div class="exchange-box">
-    <h2>Currency Exchange</h2>
+  <div class="converter">
+    <h2>🌍 African Currency Converter</h2>
+    <label for="amount">Amount</label>
     <input type="number" id="amount" placeholder="Enter amount" />
-    <select id="fromCurrency"></select>
-    <select id="toCurrency"></select>
-    <button onclick="convertCurrency()">Convert</button>
-    <div id="output"></div>
+
+    <label for="from">From Currency</label>
+    <select id="from"></select>
+
+    <label for="to">To Currency</label>
+    <select id="to"></select>
+
+    <button onclick="convert()">Convert</button>
+    <div class="result" id="result"></div>
   </div>
 
   <script>
-    const fromSelect = document.getElementById('fromCurrency');
-    const toSelect = document.getElementById('toCurrency');
+    const rates = {
+      DZD: 134.75, EGP: 49.75, LYD: 5.5, MAD: 9.85, TND: 3.10,
+      BIF: 2850, KMF: 453.5, DJF: 177.72, ERN: 15, ETB: 56.5,
+      KES: 129.06, RWF: 1442, SCR: 13.65, SOS: 571, SSP: 1100,
+      SDG: 1100, TZS: 2566.37, UGX: 3750, BWP: 13.65, SZL: 17.89,
+      LSL: 17.89, MGA: 4500, MWK: 1700, MUR: 46, MZN: 63.25,
+      NAD: 17.89, ZAR: 17.83, ZMW: 27.5, ZWL: 10000, NGN: 1800
+    };
 
-    // Populate currency dropdowns
-    async function populateCurrencies() {
-      try {
-        const res = await fetch('https://api.exchangerate.host/symbols');
-        const data = await res.json();
-        const symbols = data.symbols;
+    const fromSelect = document.getElementById('from');
+    const toSelect = document.getElementById('to');
 
-        Object.keys(symbols).forEach((code) => {
-          const desc = symbols[code].description;
-          const option1 = new Option(`${desc} (${code})`, code);
-          const option2 = new Option(`${desc} (${code})`, code);
-
-          fromSelect.appendChild(option1);
-          toSelect.appendChild(option2);
-        });
-
-        fromSelect.value = 'USD';
-        toSelect.value = 'KES';
-      } catch (error) {
-        alert('Failed to load currency list. Please try again later.');
-        console.error(error);
-      }
+    for (let code in rates) {
+      const option1 = document.createElement('option');
+      const option2 = document.createElement('option');
+      option1.value = option2.value = code;
+      option1.text = option2.text = code;
+      fromSelect.appendChild(option1);
+      toSelect.appendChild(option2);
     }
 
-    populateCurrencies();
+    fromSelect.value = "KES";
+    toSelect.value = "ZAR";
 
-    // Currency conversion function
-    function convertCurrency() {
+    function convert() {
       const amount = parseFloat(document.getElementById('amount').value);
       const from = fromSelect.value;
       const to = toSelect.value;
 
-      if (!amount || amount <= 0) {
-        alert('Please enter a valid amount.');
+      if (!amount || !rates[from] || !rates[to]) {
+        document.getElementById('result').textContent = "Please enter valid input.";
         return;
       }
 
-      document.getElementById('output').innerText = 'Converting...';
+      const usdAmount = amount / rates[from];
+      const result = usdAmount * rates[to];
 
-      fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`)
-        .then(res => res.json())
-        .then(data => {
-          const result = data.result;
-          document.getElementById('output').innerText =
-            `${amount} ${from} = ${result.toFixed(2)} ${to}`;
-        })
-        .catch(() => {
-          document.getElementById('output').innerText = 'Error fetching conversion data.';
-        });
+      document.getElementById('result').textContent = 
+        `${amount} ${from} ≈ ${result.toFixed(2)} ${to}`;
     }
   </script>
-
 </body>
 </html>
