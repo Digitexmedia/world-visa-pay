@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crypto to Fiat Converter - World Visa Pay</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      padding: 40px;
+      text-align: center;
+    }
+    .converter {
+      background: white;
+      padding: 30px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 12px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #2d89ef;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1c6ed2;
+    }
+    #result {
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="converter">
+    <h2>Crypto to Fiat Converter</h2>
+    <input type="number" id="cryptoAmount" placeholder="Enter crypto amount" />
+    
+    <select id="cryptoSelect">
+      <option value="bitcoin">BTC</option>
+      <option value="ethereum">ETH</option>
+      <option value="tether">USDT</option>
+    </select>
+
+    <select id="fiatSelect">
+      <option value="usd">USD</option>
+      <option value="kes">KES</option>
+      <option value="ngn">NGN</option>
+    </select>
+
+    <button onclick="convert()">Convert</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function convert() {
+      const crypto = document.getElementById("cryptoSelect").value;
+      const fiat = document.getElementById("fiatSelect").value;
+      const amount = parseFloat(document.getElementById("cryptoAmount").value);
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${crypto}&vs_currencies=${fiat}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const rate = data[crypto][fiat];
+        const converted = (amount * rate).toFixed(2);
+
+        document.getElementById("result").innerText =
+          `${amount} ${crypto.toUpperCase()} = ${converted} ${fiat.toUpperCase()}`;
+      } catch (error) {
+        document.getElementById("result").innerText = "Conversion failed. Try again.";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
